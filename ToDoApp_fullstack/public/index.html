@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>To-Do App</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="main">
+        <h1>Task Master</h1>
+        <form action="get" id="addtask">
+            <input type="text" placeholder="add task..." >
+            <button>Add Task</button>
+        </form>
+        <br>
+        <div id="filter">
+            <button id="all" class="active">All</button>
+            <button id="active" >Active</button>
+            <button id="completed" >Completed</button>
+        </div>
+        <br>
+        <div id="todo-container">
+            
+        </div>
+        <div id="complete">
+            <button id="clear">Clear Completed</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

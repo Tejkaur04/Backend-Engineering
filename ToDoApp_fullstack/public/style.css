@@ -1,0 +1,84 @@
+body{
+    justify-content: center;
+    display: flex;
+}
+#main{
+    border: 2px solid #008170;
+    background-color: #0F0F0F;
+    color: aliceblue;
+    width: 90%;
+    margin-top: 10vh;
+    text-align: center;
+    border-radius: 10px;
+    padding: 2vh;
+}
+#addtask > input{
+    width:70vw;
+    height: 4vh;
+
+}
+#addtask > button{
+    height: 5vh;
+    background-color: teal;
+    color: aliceblue;
+    border-color: whitesmoke;
+}
+
+.active{
+     height: 5vh;
+    background-color: teal;
+    color: aliceblue;
+    border-color: teal;
+}
+
+#all{
+    height: 5vh;
+}
+
+#active{
+    height: 5vh;
+}
+
+#completed{
+    height: 5vh;
+}
+
+#clear{
+    height: 6vh;
+    color: #0D7C66;
+    background-color:#BDE8CA ;
+    border-radius: 10px;
+}
+
+.todo {
+    border: teal 0.5px solid ;
+    /* box-shadow:  0 4px 12px rgba(241, 240, 245, 0.2); */
+    border-radius: 10px;
+    background-color: #31363F;
+    padding: 0px 20px;
+    margin-bottom: 5px;
+    color: white;
+    justify-content: space-between;
+    display: flex;
+}
+.cont{
+    margin-top: 3vh ;
+}
+
+.status{
+    background-color: #C5E898;
+    border-radius: 10px;
+    border: #C5E898 2px solid;
+    padding: 5px;
+    color: #005B41;
+    margin-right: 3px;
+}
+
+.delete{
+    background-color: #C80036 ;
+    border-radius: 10px;
+    border: #C80036 2px solid;
+    padding: 5px;
+    color: aliceblue;
+
+}
