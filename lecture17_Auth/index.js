@@ -6,9 +6,10 @@ const cors = require("cors");
 app.use(cors({
     "origin": "http://localhost:3000",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    //"credentials": true,
-    "preflightContinue": false,
-    "optionsSuccessStatus": 204
+    // "preflightContinue": false,
+    // "optionsSuccessStatus": 204,
+    //cors access to cookies
+    "credentials": true,
 }))
 
 const connectDB = require("./db/connectDB");
