@@ -38,4 +38,16 @@ router.post("/create", async (req, res) => {
     }
 });
 
+router.get("/all", async (req, res) => {
+    try {
+        const users = await prisma.user.findMany({
+            include: { posts: true }, //saara data display krdega
+            orderBy: { createdAt: "desc" }
+        });
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 module.exports = router;
