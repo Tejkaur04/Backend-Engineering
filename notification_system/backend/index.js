@@ -1,94 +1,93 @@
 const express = require("express");
+const app = express();
 const http = require("http");
 const cors = require("cors");
-const { Server } = require("socket.io");
+const server = http.createServer(app);
+const socket = require("socket.io");
+const {v4:uuid} = require("uuid");
+const io = socket(server,{
+  cors:{
+    origin:"http://localhost:3000",
+  }
+});
+const PORT = 4000;
 const path = require("path");
 
-const app = express();
-const server = http.createServer(app);
-
-// ✅ Initialize Socket.IO correctly
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-});
-
-const PORT = 5000;
-
-// ✅ Middleware setup
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  })
-);
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname,"public")))
 
-// ✅ In-memory user and post storage
+//{ 
+// "username":"socket.id"
+// "username2":socket.id
+// }
 const Users = {};
 
-//post->{
-// author -> username
-// content -> string 
-// likes-> [Username]
-// createdAt->date
+//  post - > {
+  // id -> uuid()  
+  // author  -> username
+  // content  ->string
+  // likes -> [username]
+  // createdAt -> date
 // }
+let Posts = []
 
-const posts = []; // Example: { author, content, likes: [user], createdAt }
-
-// ✅ Socket.IO connection handling
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  socket.on("register", (userName) => {
-    Users[userName] = socket.id;
-    console.log(`${userName} registered with id ${socket.id}`);
-  });
-
-  app.post("/post/create",async(req,res)=>{
-    try {
-        const{username,content} = req.body;
-        const post = {
-            author:username,
-            content,
-            likes:[],
-            createdAt: new Date()
-        }
-        posts.unshift(post);
-        res.status(201).json({posts:Post});
-    } catch (error) {
-        res.status(401).json({message:error.message})
-    }
-  })
-
-  app.get("/post/all",async(req,res)=>{
-    res.status({posts:Posts})
-  })
-
+io.on("connection",(client)=>{
+  console.log("User 1 connected -> ",client.id);
   
+  // register user
+  client.on("register",(username)=>{
+    Users[username] = socket.id
+  })
+  
+})
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-    // Optional: remove user from Users map
-    for (let user in Users) {
-      if (Users[user] === socket.id) {
-        delete Users[user];
-        break;
-      }
+app.post("/post/create",async (req,res)=>{
+  try {
+    const {username,content} = req.body;
+    const post = {
+      id:uuid(),
+      author:username,
+      content,
+      likes:[],
+      createdAt: new Date()
     }
-  });
-});
+    Posts.unshift(post);
+    res.status(201).json({posts:Posts})
+  } catch (error) {
+    res.status(401).json({message:error.message})
+  }
+})
 
-// ✅ Base route
+app.post("/post/like/:id/:username",(req,res)=>{
+  try {
+    const {id,username} = req.params;
+    let author;
+    let content;
+    Posts = Posts.map((post)=>{
+      if(post.id==id){
+        author = post.author;
+        content = post.content;
+        post.likes.push(username)
+      }
+      return post;
+    })
+    io.to(Users[author]).emit("noticefication",`${username} liked your post ${content}`)
+    res.status(200).json({posts:Posts});
+  } catch (error) {
+    res.status(402).json({message:error.message})
+  }
+})
+
+app.get("/post/all",(req,res)=>{
+  res.status(200).json({posts:Posts})
+})
+
 app.get("/", (req, res) => {
-  res.send("Server running...");
+  res.send("server running");
 });
 
-// ✅ Start server
-server.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+
+
+server.listen(PORT, () => console.log("Server running on port " + PORT));
