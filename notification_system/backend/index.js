@@ -38,7 +38,7 @@ io.on("connection",(client)=>{
   
   // register user
   client.on("register",(username)=>{
-    Users[username] = socket.id
+    Users[username] = client.id
   })
   
 })
@@ -63,20 +63,30 @@ app.post("/post/create",async (req,res)=>{
 app.post("/post/like/:id/:username",(req,res)=>{
   try {
     const {id,username} = req.params;
-    let author;
-    let content;
+    // let author;
+    // let content;
+    let userPost;
     Posts = Posts.map((post)=>{
       if(post.id==id){
-        author = post.author;
-        content = post.content;
-        post.likes.push(username)
+        if(post.likes.includes(username)){
+          throw new Error("already liked the post");
+        }
+        userPost = post;
+        post.likes.push(username);
+        // author = post.author;
+        // content = post.content;
+        // post.likes.push(username);
       }
       return post;
     })
-    io.to(Users[author]).emit("noticefication",`${username} liked your post ${content}`)
+    console.log(userPost)
+    if(Users[userPost.author] && username!==userPost.author){
+      io.to(Users[userPost.author]).emit("notice",`${username} liked your post ${userPost.content}`)
+    }
     res.status(200).json({posts:Posts});
   } catch (error) {
     res.status(402).json({message:error.message})
+    console.log(error)
   }
 })
 
